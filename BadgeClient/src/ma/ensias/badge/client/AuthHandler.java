@@ -10,17 +10,35 @@ import java.util.Random;
 public class AuthHandler {
 
     private static final byte[] AES_KEY = { 
-        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 
-        0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F 
+        (byte)0x4A, (byte)0xE6, (byte)0x1B, (byte)0x9D, 
+        (byte)0x55, (byte)0x8C, (byte)0x2F, (byte)0x33, 
+        (byte)0xA1, (byte)0x08, (byte)0x77, (byte)0xDE, 
+        (byte)0xBC, (byte)0x92, (byte)0xF0, (byte)0x14 
     };
+
+    private byte[] getTimeBytes() {
+        long now = System.currentTimeMillis();
+        byte[] time = new byte[8];
+        for (int i = 7; i >= 0; i--) {
+            time[i] = (byte)(now & 0xFF);
+            now >>= 8;
+        }
+        return time;
+    }
 
     public boolean verifyPin(CardChannel channel, String pinStr) {
         try {
+            byte[] time = getTimeBytes();
             byte[] pinBytes = new byte[pinStr.length()];
             for (int i = 0; i < pinStr.length(); i++) {
                 pinBytes[i] = (byte) Character.getNumericValue(pinStr.charAt(i));
             }
-            ResponseAPDU resp = channel.transmit(new CommandAPDU(0x00, 0x20, 0x00, 0x00, pinBytes));
+
+            byte[] data = new byte[8 + pinBytes.length];
+            System.arraycopy(time, 0, data, 0, 8);
+            System.arraycopy(pinBytes, 0, data, 8, pinBytes.length);
+
+            ResponseAPDU resp = channel.transmit(new CommandAPDU(0x00, 0x20, 0x00, 0x00, data));
             return resp.getSW() == 0x9000;
         } catch (Exception e) {
             return false;
@@ -31,8 +49,13 @@ public class AuthHandler {
         try {
             byte[] challenge = new byte[16];
             new Random().nextBytes(challenge);
+            byte[] time = getTimeBytes();
 
-            ResponseAPDU resp = channel.transmit(new CommandAPDU(0x00, 0x30, 0x00, 0x00, challenge));
+            byte[] payload = new byte[24];
+            System.arraycopy(challenge, 0, payload, 0, 16);
+            System.arraycopy(time, 0, payload, 16, 8);
+
+            ResponseAPDU resp = channel.transmit(new CommandAPDU(0x00, 0x30, 0x00, 0x00, payload));
             if (resp.getSW() != 0x9000) return false;
 
             byte[] cardResponse = resp.getData();

@@ -3,24 +3,31 @@ package ma.ensias.badge.applet;
 public class SessionModule {
     
     private boolean isAuthenticated;
-    private short loginTime;
+    private byte transactionLimit;
 
     public SessionModule() {
         isAuthenticated = false;
-        loginTime = 0;
+        transactionLimit = 0;
     }
 
-    public void startSession(short time) {
+    public void startSession() {
         isAuthenticated = true;
-        loginTime = time;
+        transactionLimit = 5;
     }
 
     public void closeSession() {
         isAuthenticated = false;
-        loginTime = 0;
+        transactionLimit = 0;
     }
 
     public boolean isSessionActive() {
-        return isAuthenticated;
+        if (!isAuthenticated) return false;
+        if (transactionLimit > 0) {
+            transactionLimit--;
+            return true;
+        } else {
+            closeSession();
+            return false;
+        }
     }
 }

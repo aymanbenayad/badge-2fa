@@ -24,6 +24,11 @@ public class BadgeApplet extends Applet {
         traceModule = new TraceModule();
     }
 
+    public void deselect() {
+        pinModule.reset();
+        sessionModule.closeSession();
+    }
+
     public void process(APDU apdu) {
         if (selectingApplet()) {
             return;
@@ -51,9 +56,12 @@ public class BadgeApplet extends Applet {
         byte[] buffer = apdu.getBuffer();
         byte len = (byte) apdu.setIncomingAndReceive();
         
-        if (pinModule.verify(buffer, ISO7816.OFFSET_CDATA, len)) {
-            sessionModule.startSession((short) 0);
+        if (len < 8) ISOException.throwIt(ISO7816.SW_WRONG_LENGTH);
+
+        if (pinModule.verify(buffer, (short)(ISO7816.OFFSET_CDATA + 8), (byte)(len - 8))) {
+            sessionModule.startSession();
         } else {
+            traceModule.addLog(buffer, ISO7816.OFFSET_CDATA, false);
             sessionModule.closeSession();
             ISOException.throwIt(ISO7816.SW_SECURITY_STATUS_NOT_SATISFIED);
         }
@@ -67,16 +75,25 @@ public class BadgeApplet extends Applet {
         byte[] buffer = apdu.getBuffer();
         short len = apdu.setIncomingAndReceive();
         
-        short outLen = cryptoModule.encryptChallenge(buffer, ISO7816.OFFSET_CDATA, len, buffer, (short) 0);
+        if (len < 24) ISOException.throwIt(ISO7816.SW_WRONG_LENGTH);
+
+        short outLen = cryptoModule.encryptChallenge(buffer, ISO7816.OFFSET_CDATA, (short) 16, buffer, (short) 0);
         
-        traceModule.addLog(buffer, (short) 0, outLen);
+        traceModule.addLog(buffer, (short)(ISO7816.OFFSET_CDATA + 16), true);
         
         apdu.setOutgoingAndSend((short) 0, outLen);
     }
 
     private void handleGetLogs(APDU apdu) {
-        byte[] buffer = apdu.getBuffer();
-        short len = traceModule.retrieveLogs(buffer, (short) 0);
-        apdu.setOutgoingAndSend((short) 0, len);
+        if (!sessionModule.isSessionActive()) {
+            ISOException.throwIt(ISO7816.SW_CONDITIONS_NOT_SATISFIED);
+        }
+
+        byte[] logBuffer = traceModule.getBuffer();
+        short logSize = traceModule.getCurrentSize();
+
+        apdu.setOutgoing();
+        apdu.setOutgoingLength(logSize);
+        apdu.sendBytesLong(logBuffer, (short) 0, logSize);
     }
 }

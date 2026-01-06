@@ -1,6 +1,7 @@
 package ma.ensias.badge.client;
 
 import javax.smartcardio.*;
+import java.util.Date;
 
 public class LogManager {
 
@@ -9,13 +10,21 @@ public class LogManager {
             ResponseAPDU resp = channel.transmit(new CommandAPDU(0x00, 0x40, 0x00, 0x00));
             if (resp.getSW() == 0x9000) {
                 byte[] data = resp.getData();
-                StringBuilder sb = new StringBuilder();
-                for (byte b : data) {
-                    sb.append(String.format("%02X ", b));
+                System.out.println("--- HISTORIQUE D'ACCES ---");
+                for (int i = 0; i < data.length - 8; i += 9) {
+                    long timestamp = 0;
+                    for (int j = 0; j < 8; j++) {
+                        timestamp = (timestamp << 8) + (data[i + j] & 0xFF);
+                    }
+                    byte status = data[i + 8];
+                    
+                    if (timestamp != 0) {
+                        String statusStr = (status == (byte)0xAA) ? "ACCES ACCORDE" : "ECHEC D'ACCES";
+                        System.out.println(new Date(timestamp) + " : " + statusStr);
+                    }
                 }
-                System.out.println("Raw Logs: " + sb.toString());
             } else {
-                System.out.println("Failed to read logs: " + Integer.toHexString(resp.getSW()));
+                System.out.println("Erreur lecture logs: " + Integer.toHexString(resp.getSW()));
             }
         } catch (Exception e) {
             e.printStackTrace();
