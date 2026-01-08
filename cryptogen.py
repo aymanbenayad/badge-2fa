@@ -19,25 +19,23 @@ def run():
     d = pn.d.to_bytes(128, byteorder='big')
     p = pn.p.to_bytes(64, byteorder='big')
     q = pn.q.to_bytes(64, byteorder='big')
-    dp = pn.dmp1.to_bytes(64, byteorder='big')
-    dq = pn.dmq1.to_bytes(64, byteorder='big')
-    qi = pn.iqmp.to_bytes(64, byteorder='big')
     
     pub_n = public_key.public_numbers()
     modulus = pub_n.n.to_bytes(128, byteorder='big')
     exponent = pub_n.e.to_bytes(3, byteorder='big')
 
+    pin_bytes = bytes([int(digit) for digit in PIN])
+    
     digest = hashes.Hash(hashes.SHA256())
-    digest.update(PIN.encode())
+    digest.update(pin_bytes)
     aes_key = digest.finalize()[:16]
     
     def encrypt_comp(data, a_key):
         iv = os.urandom(16)
-        pad_len = 16 - (len(data) % 16)
-        padded = data + bytes([pad_len] * pad_len)
         cipher = Cipher(algorithms.AES(a_key), modes.CBC(iv))
         encryptor = cipher.encryptor()
-        return iv + encryptor.update(padded) + encryptor.finalize()
+        encrypted_data = encryptor.update(data) + encryptor.finalize()
+        return iv + encrypted_data
 
     with open("rsa_vault_java.txt", "w") as f:
         f.write(to_java_array("RSA_MOD", modulus) + "\n")

@@ -26,16 +26,6 @@ public class ProtocolManager {
         }
     }
 
-    public ResponseAPDU send(CardChannel channel, int cla, int ins, int p1, int p2, byte[] data) throws Exception {
-        CommandAPDU cmd;
-        if (data != null) {
-            cmd = new CommandAPDU(cla, ins, p1, p2, data);
-        } else {
-            cmd = new CommandAPDU(cla, ins, p1, p2);
-        }
-        return channel.transmit(cmd);
-    }
-
     public void close() {
         try {
             if (card != null) card.disconnect(false);

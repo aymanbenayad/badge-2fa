@@ -7,7 +7,7 @@ public class PinModule {
     private OwnerPIN pin;
     
     public PinModule() {
-        pin = new OwnerPIN((byte) 3, (byte) 9);
+        pin = new OwnerPIN((byte) 5, (byte) 9);
         byte[] defaultPin = { 4, 0, 4, 4, 0, 7, 4, 0, 9 };
         pin.update(defaultPin, (short) 0, (byte) 9);
     }
@@ -22,5 +22,9 @@ public class PinModule {
 
     public void reset() {
         pin.reset();
+    }
+
+    public byte getTriesRemaining() {
+        return pin.getTriesRemaining();
     }
 }
