@@ -1,5 +1,5 @@
 // converted by version  [v25.1]
-// on Tue Jan 06 18:26:53 GMT+01:00 2026
+// on Thu Jan 08 02:36:34 GMT+01:00 2026
 
 .package ma/ensias/badge/applet {
 	.aid 0x59:0x59:0x59:0x59:0x59:0x59;
@@ -26,9 +26,9 @@
 		// 3
 		instanceFieldRef TraceModule BadgeApplet/traceModule;
 		// 4
-		instanceFieldRef 2.20 CryptoModule/key;
+		instanceFieldRef 2.9 CryptoModule/rsaPublicKey;
 		// 5
-		instanceFieldRef 3.1 CryptoModule/cipher;
+		instanceFieldRef 3.1 CryptoModule/rsaCipher;
 		// 6
 		instanceFieldRef 0.9 PinModule/pin;
 		// 7
@@ -104,44 +104,48 @@
 			.descriptor	Ljavacard/security/Key;	2.0;
 
 		// 39
-		.classRef 2.20;		// javacard/security/AESKey
+		.classRef 2.9;		// javacard/security/RSAPublicKey
 		// 40
 		.classRef PinModule;
 		// 41
+		staticFieldRef byte[] CryptoModule/RSA_MOD;
+		// 42
+		staticFieldRef byte[] CryptoModule/RSA_EXP;
+		// 43
 		staticMethodRef 3.1.0(BZ)Ljavacardx/crypto/Cipher;;		// javacardx/crypto/Cipher.getInstance(BZ)Ljavacardx/crypto/Cipher;
 			.descriptor	Ljavacardx/crypto/Cipher;	3.1;
 
-		// 42
+		// 44
 		staticMethodRef PinModule/<init>()V;
-		// 43
+		// 45
 		virtualMethodRef 3.1.3(Ljavacard/security/Key;B)V;		// init(Ljavacard/security/Key;B)V
 			.descriptor	Ljavacard/security/Key;	2.0;
 
-		// 44
-		virtualMethodRef 3.1.1([BSS[BS)S;		// doFinal([BSS[BS)S
-		// 45
-		.classRef 0.9;		// javacard/framework/OwnerPIN
 		// 46
-		staticMethodRef 0.9.0(BB)V;		// javacard/framework/OwnerPIN.<init>(BB)V
+		virtualMethodRef 3.1.1([BSS[BS)S;		// doFinal([BSS[BS)S
 		// 47
-		staticMethodRef BadgeApplet/<init>()V;
+		.classRef 0.9;		// javacard/framework/OwnerPIN
 		// 48
-		virtualMethodRef 0.9.8([BSB)V;		// update([BSB)V
+		staticMethodRef 0.9.0(BB)V;		// javacard/framework/OwnerPIN.<init>(BB)V
 		// 49
-		virtualMethodRef 0.9.1([BSB)Z;		// check([BSB)Z
+		staticMethodRef BadgeApplet/<init>()V;
 		// 50
-		virtualMethodRef 0.9.4()Z;		// isValidated()Z
+		virtualMethodRef 0.9.8([BSB)V;		// update([BSB)V
 		// 51
-		virtualMethodRef 0.9.5()V;		// reset()V
+		virtualMethodRef 0.9.1([BSB)Z;		// check([BSB)Z
 		// 52
-		.classRef CryptoModule;
+		virtualMethodRef 0.9.4()Z;		// isValidated()Z
 		// 53
-		staticMethodRef CryptoModule/<init>()V;
+		virtualMethodRef 0.9.5()V;		// reset()V
 		// 54
-		.classRef BadgeApplet;
+		.classRef CryptoModule;
 		// 55
-		.classRef SessionModule;
+		staticMethodRef CryptoModule/<init>()V;
 		// 56
+		.classRef BadgeApplet;
+		// 57
+		.classRef SessionModule;
+		// 58
 		staticMethodRef 0.16.1([BS[BSS)S;		// javacard/framework/Util.arrayCopy([BS[BSS)S
 	}
 
@@ -175,9 +179,9 @@
 			.stack 5;
 			.locals 0;
 
-				L0:	new 54;		// ma/ensias/badge/applet/BadgeApplet
+				L0:	new 56;		// ma/ensias/badge/applet/BadgeApplet
 					dup;
-					invokespecial 47;		// ma/ensias/badge/applet/BadgeApplet.<init>()V
+					invokespecial 49;		// ma/ensias/badge/applet/BadgeApplet.<init>()V
 					aload_0;
 					sload_1;
 					sconst_1;
@@ -198,15 +202,15 @@
 					aload_0;
 					new 40;		// ma/ensias/badge/applet/PinModule
 					dup;
-					invokespecial 42;		// ma/ensias/badge/applet/PinModule.<init>()V
+					invokespecial 44;		// ma/ensias/badge/applet/PinModule.<init>()V
 					putfield_a 0;		// reference ma/ensias/badge/applet/BadgeApplet.pinModule
 					aload_0;
-					new 52;		// ma/ensias/badge/applet/CryptoModule
+					new 54;		// ma/ensias/badge/applet/CryptoModule
 					dup;
-					invokespecial 53;		// ma/ensias/badge/applet/CryptoModule.<init>()V
+					invokespecial 55;		// ma/ensias/badge/applet/CryptoModule.<init>()V
 					putfield_a 1;		// reference ma/ensias/badge/applet/BadgeApplet.cryptoModule
 					aload_0;
-					new 55;		// ma/ensias/badge/applet/SessionModule
+					new 57;		// ma/ensias/badge/applet/SessionModule
 					dup;
 					invokespecial 11;		// ma/ensias/badge/applet/SessionModule.<init>()V
 					putfield_a 2;		// reference ma/ensias/badge/applet/BadgeApplet.sessionModule
@@ -332,7 +336,12 @@
 					if_scmpge L7;
 				L6:	sspush 26368;
 					invokestatic 23;		// javacard/framework/ISOException.throwIt(S)V
-				L7:	getfield_a_this 1;		// reference ma/ensias/badge/applet/BadgeApplet.cryptoModule
+				L7:	getfield_a_this 3;		// reference ma/ensias/badge/applet/BadgeApplet.traceModule
+					aload_2;
+					bspush 21;
+					sconst_1;
+					invokevirtual 27;		// addLog([BSZ)V
+					getfield_a_this 1;		// reference ma/ensias/badge/applet/BadgeApplet.cryptoModule
 					aload_2;
 					sconst_5;
 					bspush 16;
@@ -340,12 +349,7 @@
 					sconst_0;
 					invokevirtual 30;		// encryptChallenge([BSS[BS)S
 					sstore 4;
-				L8:	getfield_a_this 3;		// reference ma/ensias/badge/applet/BadgeApplet.traceModule
-					aload_2;
-					bspush 21;
-					sconst_1;
-					invokevirtual 27;		// addLog([BSZ)V
-					aload_1;
+				L8:	aload_1;
 					sconst_0;
 					sload 4;
 					invokevirtual 31;		// setOutgoingAndSend(SS)V
@@ -388,8 +392,10 @@
 	.class public CryptoModule 1 extends 1.0 {		// extends java/lang/Object
 
 		.fields {
-			private 2.20 key 0;		// Ljavacard/security/AESKey;
-			private 3.1 cipher 1;		// Ljavacardx/crypto/Cipher;
+			private 2.9 rsaPublicKey 0;		// Ljavacard/security/RSAPublicKey;
+			private 3.1 rsaCipher 1;		// Ljavacardx/crypto/Cipher;
+			private static final byte[] RSA_MOD = {-41,-88,-61,-4,-83,-17,49,112,53,29,65,96,20,123,55,107,-113,-115,-64,51,-108,-19,90,119,54,106,-12,-60,-3,-29,-81,-66,-45,-128,21,-64,63,-51,49,-38,-1,30,-48,-24,103,8,31,-31,82,-122,-19,-124,-9,-89,-101,-116,63,42,27,40,1,104,-61,1,100,114,-115,-11,-5,8,-71,-14,125,-46,-82,-20,-127,-23,-3,-114,32,58,33,101,-58,100,-2,39,7,113,36,110,98,-88,120,-29,-86,-118,-63,115,-88,-63,126,-25,62,-28,104,-30,48,-11,-52,122,56,76,-128,74,76,-107,72,-66,1,-6,18,-39,-87,-100,-59,111};		// [B
+			private static final byte[] RSA_EXP = {1,0,1};		// [B
 		}
 
 		.publicMethodTable 1 2 {
@@ -402,93 +408,34 @@
 
 		.method public <init>()V 0 {
 			.stack 4;
-			.locals 1;
+			.locals 0;
 
 				L0:	aload_0;
 					invokespecial 37;		// java/lang/Object.<init>()V
-					bspush 16;
-					newarray 11;
-					dup;
-					sconst_0;
-					bspush 74;
-					bastore;
-					dup;
-					sconst_1;
-					bspush -26;
-					bastore;
-					dup;
-					sconst_2;
-					bspush 27;
-					bastore;
-					dup;
-					sconst_3;
-					bspush -99;
-					bastore;
-					dup;
+					aload_0;
 					sconst_4;
-					bspush 85;
-					bastore;
-					dup;
-					sconst_5;
-					bspush -116;
-					bastore;
-					dup;
-					bspush 6;
-					bspush 47;
-					bastore;
-					dup;
-					bspush 7;
-					bspush 51;
-					bastore;
-					dup;
-					bspush 8;
-					bspush -95;
-					bastore;
-					dup;
-					bspush 9;
-					bspush 8;
-					bastore;
-					dup;
-					bspush 10;
-					bspush 119;
-					bastore;
-					dup;
-					bspush 11;
-					bspush -34;
-					bastore;
-					dup;
-					bspush 12;
-					bspush -68;
-					bastore;
-					dup;
-					bspush 13;
-					bspush -110;
-					bastore;
-					dup;
-					bspush 14;
-					bspush -16;
-					bastore;
-					dup;
-					bspush 15;
-					bspush 20;
-					bastore;
-					astore_1;
-				L1:	aload_0;
-					bspush 15;
-					sspush 128;
+					sspush 1024;
 					sconst_0;
 					invokestatic 38;		// javacard/security/KeyBuilder.buildKey(BSZ)Ljavacard/security/Key;
-					checkcast 0 39;		// T_CLASSORINTERFACE javacard/security/AESKey
-					putfield_a 4;		// reference ma/ensias/badge/applet/CryptoModule.key
-					getfield_a_this 4;		// reference ma/ensias/badge/applet/CryptoModule.key
-					aload_1;
+					checkcast 0 39;		// T_CLASSORINTERFACE javacard/security/RSAPublicKey
+					putfield_a 4;		// reference ma/ensias/badge/applet/CryptoModule.rsaPublicKey
+					getfield_a_this 4;		// reference ma/ensias/badge/applet/CryptoModule.rsaPublicKey
+					getstatic_a 41;		// reference ma/ensias/badge/applet/CryptoModule.RSA_MOD
 					sconst_0;
-					invokeinterface 3 39 4;		// javacard/security/AESKey
+					getstatic_a 41;		// reference ma/ensias/badge/applet/CryptoModule.RSA_MOD
+					arraylength;
+					invokeinterface 4 39 7;		// javacard/security/RSAPublicKey
+					getfield_a_this 4;		// reference ma/ensias/badge/applet/CryptoModule.rsaPublicKey
+					getstatic_a 42;		// reference ma/ensias/badge/applet/CryptoModule.RSA_EXP
+					sconst_0;
+					getstatic_a 42;		// reference ma/ensias/badge/applet/CryptoModule.RSA_EXP
+					arraylength;
+					invokeinterface 4 39 6;		// javacard/security/RSAPublicKey
 					aload_0;
-					bspush 13;
+					bspush 10;
 					sconst_0;
-					invokestatic 41;		// javacardx/crypto/Cipher.getInstance(BZ)Ljavacardx/crypto/Cipher;
-					putfield_a 5;		// reference ma/ensias/badge/applet/CryptoModule.cipher
+					invokestatic 43;		// javacardx/crypto/Cipher.getInstance(BZ)Ljavacardx/crypto/Cipher;
+					putfield_a 5;		// reference ma/ensias/badge/applet/CryptoModule.rsaCipher
 					return;
 		}
 
@@ -496,17 +443,17 @@
 			.stack 6;
 			.locals 0;
 
-				L0:	getfield_a_this 5;		// reference ma/ensias/badge/applet/CryptoModule.cipher
-					getfield_a_this 4;		// reference ma/ensias/badge/applet/CryptoModule.key
+				L0:	getfield_a_this 5;		// reference ma/ensias/badge/applet/CryptoModule.rsaCipher
+					getfield_a_this 4;		// reference ma/ensias/badge/applet/CryptoModule.rsaPublicKey
 					sconst_2;
-					invokevirtual 43;		// init(Ljavacard/security/Key;B)V
-					getfield_a_this 5;		// reference ma/ensias/badge/applet/CryptoModule.cipher
+					invokevirtual 45;		// init(Ljavacard/security/Key;B)V
+					getfield_a_this 5;		// reference ma/ensias/badge/applet/CryptoModule.rsaCipher
 					aload_1;
 					sload_2;
 					sload_3;
 					aload 4;
 					sload 5;
-					invokevirtual 44;		// doFinal([BSS[BS)S
+					invokevirtual 46;		// doFinal([BSS[BS)S
 					sreturn;
 		}
 
@@ -535,11 +482,11 @@
 				L0:	aload_0;
 					invokespecial 37;		// java/lang/Object.<init>()V
 					aload_0;
-					new 45;		// javacard/framework/OwnerPIN
+					new 47;		// javacard/framework/OwnerPIN
 					dup;
 					sconst_3;
 					bspush 9;
-					invokespecial 46;		// javacard/framework/OwnerPIN.<init>(BB)V
+					invokespecial 48;		// javacard/framework/OwnerPIN.<init>(BB)V
 					putfield_a 6;		// reference ma/ensias/badge/applet/PinModule.pin
 					bspush 9;
 					newarray 11;
@@ -572,7 +519,7 @@
 					aload_1;
 					sconst_0;
 					bspush 9;
-					invokevirtual 48;		// update([BSB)V
+					invokevirtual 50;		// update([BSB)V
 					return;
 		}
 
@@ -584,7 +531,7 @@
 					aload_1;
 					sload_2;
 					sload_3;
-					invokevirtual 49;		// check([BSB)Z
+					invokevirtual 51;		// check([BSB)Z
 					sreturn;
 		}
 
@@ -593,7 +540,7 @@
 			.locals 0;
 
 				L0:	getfield_a_this 6;		// reference ma/ensias/badge/applet/PinModule.pin
-					invokevirtual 50;		// isValidated()Z
+					invokevirtual 52;		// isValidated()Z
 					sreturn;
 		}
 
@@ -602,7 +549,7 @@
 			.locals 0;
 
 				L0:	getfield_a_this 6;		// reference ma/ensias/badge/applet/PinModule.pin
-					invokevirtual 51;		// reset()V
+					invokevirtual 53;		// reset()V
 					return;
 		}
 
@@ -738,7 +685,7 @@
 					getfield_a_this 9;		// reference ma/ensias/badge/applet/TraceModule.logStorage
 					getfield_s_this 10;		// short ma/ensias/badge/applet/TraceModule.logIndex
 					bspush 8;
-					invokestatic 56;		// javacard/framework/Util.arrayCopy([BS[BSS)S
+					invokestatic 58;		// javacard/framework/Util.arrayCopy([BS[BSS)S
 					pop;
 					getfield_a_this 9;		// reference ma/ensias/badge/applet/TraceModule.logStorage
 					getfield_s_this 10;		// short ma/ensias/badge/applet/TraceModule.logIndex
@@ -768,7 +715,7 @@
 					aload_1;
 					sload_2;
 					getfield_s_this 10;		// short ma/ensias/badge/applet/TraceModule.logIndex
-					invokestatic 56;		// javacard/framework/Util.arrayCopy([BS[BSS)S
+					invokestatic 58;		// javacard/framework/Util.arrayCopy([BS[BSS)S
 					pop;
 					getfield_s_this 10;		// short ma/ensias/badge/applet/TraceModule.logIndex
 					sreturn;

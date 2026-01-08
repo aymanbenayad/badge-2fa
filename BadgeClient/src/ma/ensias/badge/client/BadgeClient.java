@@ -32,7 +32,7 @@ public class BadgeClient {
                         String pin = scanner.nextLine();
                         if (auth.verifyPin(channel, pin)) {
                             System.out.println("PIN Verified. Performing 2FA...");
-                            if (auth.authenticate(channel)) {
+                            if (auth.authenticate(channel, pin)) {
                                 System.out.println("ACCESS GRANTED. Door Open.");
                             } else {
                                 System.out.println("ACCESS DENIED. Crypto Fail.");

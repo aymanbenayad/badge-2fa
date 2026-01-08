@@ -74,12 +74,11 @@ public class BadgeApplet extends Applet {
 
         byte[] buffer = apdu.getBuffer();
         short len = apdu.setIncomingAndReceive();
-        
-        if (len < 24) ISOException.throwIt(ISO7816.SW_WRONG_LENGTH);
-
-        short outLen = cryptoModule.encryptChallenge(buffer, ISO7816.OFFSET_CDATA, (short) 16, buffer, (short) 0);
-        
+    
+        if (len < 24) ISOException.throwIt(ISO7816.SW_WRONG_LENGTH); 
         traceModule.addLog(buffer, (short)(ISO7816.OFFSET_CDATA + 16), true);
+        
+        short outLen = cryptoModule.encryptChallenge(buffer, ISO7816.OFFSET_CDATA, (short) 16, buffer, (short) 0);
         
         apdu.setOutgoingAndSend((short) 0, outLen);
     }
