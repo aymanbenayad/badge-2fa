@@ -1,3 +1,6 @@
 Images/
 .env
 rsa_vault_java.txt
+src_Badge2FA*/
+*.zip
+*.mp4

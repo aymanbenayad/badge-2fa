@@ -21,9 +21,17 @@ Access is granted only when both factors are successfully verified via a Challen
 - The Applet proves identity using the RSA Private Key
 - Two independent factors are required for authentication
 
-## Sequence Diagram
+## Sequence Diagrams
 
-![sequence-diagram](./sequence_diagram.png)
+### 1. Conceptual View
+High-level functional flow showing the dependency between PIN validation and the cryptographic challenge.
+
+![Conceptual Sequence Diagram](./seq1.png)
+
+### 2. Technical View
+Detailed execution flow illustrating APDU commands (0x20, 0x30) and internal module interactions.
+
+![Technical Sequence Diagram](./seq2.png)
 
 ## Purpose
 Educational project demonstrating secure access control concepts using Java Card technology.
